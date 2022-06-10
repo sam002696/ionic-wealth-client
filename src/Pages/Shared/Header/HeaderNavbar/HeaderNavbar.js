@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import MainMenu from '../MainMenu/MainMenu';
 import MobileMenu from '../MobileMenu/MobileMenu';
 // import { RiLock2Line } from 'react-icons/ri';
-import logos from '../../../../images/logo-black.png';
+import logos from '../../../../images/Ionic-Wealth-Logo-1000px-LIGHT.png';
 import { PhoneIcon, LocationMarkerIcon, AtSymbolIcon, ChatAltIcon } from '@heroicons/react/solid'
 import './HeaderNavbar.css';
 const HeaderNavbar = () => {
@@ -58,7 +58,7 @@ const HeaderNavbar = () => {
                 <div className="container flex items-center justify-between relative">
                     <div className="logo-wrapper flex-shrink-0 w-28 md:w-36">
                         <Link to="/home">
-                            <img src={logos} alt="Ionic Wealth logo" className="w-full h-24" />
+                            <img src={logos} alt="Ionic Wealth logo" className="w-full" />
                         </Link>
                     </div>
                     {/* <div className="flex-shrink-0 md:ml-12 h-100 border-l border-r px-2 md:px-3 text-center flex flex-col justify-center font-my-title">

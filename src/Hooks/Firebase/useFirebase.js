@@ -13,11 +13,13 @@ import {
     onAuthStateChanged,
     sendPasswordResetEmail,
     signOut,
+    getIdToken,
 } from 'firebase/auth';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import initializeFirebase from '../../Pages/Login/Firebase/firebase.init';
+
 
 // initialize Swal (sweet alert)
 const MySwal = withReactContent(Swal);
@@ -29,7 +31,9 @@ const useFirebase = () => {
     const [user, setUser] = useState({});
     const [authError, setAuthError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    // const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdminLoading, setIsAdminLoading] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [token, setToken] = useState('');
 
     const auth = getAuth();
     const appleProvider = new OAuthProvider('apple.com');
@@ -37,6 +41,8 @@ const useFirebase = () => {
     const githubProvider = new GithubAuthProvider();
     const twitterProvider = new TwitterAuthProvider();
     const facebookProvider = new FacebookAuthProvider();
+
+
 
     // process auth error message
     const processAuthErrorMessage = error => {
@@ -59,6 +65,9 @@ const useFirebase = () => {
             },
         })
     };
+
+
+
 
     // register user with email and password
     const registerWithEmail = (name, email, password, location, history) => {
@@ -84,8 +93,10 @@ const useFirebase = () => {
                 const popupMessage = `With <span class="font-semibold">${email}</span>`;
                 showPopupMessage('success', popupTitle, popupMessage);
                 // return to prev page
-                const redirect_url = location?.state?.from || '/home';
+
+                const redirect_url = location?.state?.from || '/dashboard';
                 history.replace(redirect_url);
+
             })
             .catch(error => {
                 const errorText = processAuthErrorMessage(error);
@@ -107,9 +118,14 @@ const useFirebase = () => {
                 const popupTitle = `<span class="text-green-600">Logged in successfully!</span>`;
                 const popupMessage = `With <span class="font-semibold">${result.user.email}</span>`;
                 showPopupMessage('success', popupTitle, popupMessage);
-                // return to prev page
+
                 const redirect_url = location?.state?.from || '/home';
                 history.replace(redirect_url);
+
+                // const redirect_url = location?.state?.from || '/dashboard';
+                // history.replace(redirect_url);
+
+
             })
             .catch(error => {
                 const errorText = processAuthErrorMessage(error);
@@ -153,9 +169,10 @@ const useFirebase = () => {
                 showPopupMessage('success', popupTitle, popupMessage);
                 // update user to database
                 saveUserToDatabase(user.email, user.displayName, 'PUT');
-                // return to prev page
+                // return to prev page      
                 const redirect_url = location?.state?.from || '/home';
                 history.replace(redirect_url);
+
             })
             .catch(error => {
                 console.log(error);
@@ -196,6 +213,9 @@ const useFirebase = () => {
         const unsubscribed = onAuthStateChanged(auth, user => {
             if (user) {
                 setUser(user);
+                getIdToken(user).then(IdToken => {
+                    setToken(IdToken);
+                });
             } else {
                 setUser({});
 
@@ -205,9 +225,53 @@ const useFirebase = () => {
         });
         return () => unsubscribed;
     }, [auth]);
+    // observe user admin state
+    useEffect(() => {
+        const unsubscribed = onAuthStateChanged(auth, user => {
+            if (user) {
+                setUser(user);
+                const url = `https://arcane-earth-23317.herokuapp.com/users/${user?.email}`;
+                axios
+                    .get(url, {
+                        headers: {
+                            'authorization': `Bearer ${token}`
+                        }
+                    })
+                    .then(res => {
+
+                        // console.log(res.data?.admin);
+                        if (res.data?.admin) {
+                            setIsAdmin(true);
+                        }
+                        else {
+                            setIsAdmin(false);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+                    .finally(() => setIsAdminLoading(false));
+            } else {
+                setUser({});
+                setIsAdmin(false);
+            }
+        });
+        return () => unsubscribed;
+    }, [auth, token]);
+
+    // set admin to local storage
+    useEffect(() => {
+        if (isAdmin) {
+            localStorage.setItem('isAdmin', true);
+        }
+        else {
+            localStorage.setItem('isAdmin', false);
+        }
+    }, [isAdmin]);
 
     // log out function
     const logOut = (location, history) => {
+        localStorage.removeItem('isAdmin');
         setIsLoading(true);
         signOut(auth)
             .then(() => {
@@ -233,6 +297,10 @@ const useFirebase = () => {
             method: method,
             url: url,
             data: user,
+        }, {
+            headers: {
+                'authorization': `Bearer ${token}`
+            }
         })
             .then(res => {
                 // console.log(res.data);
@@ -246,21 +314,13 @@ const useFirebase = () => {
             .catch(error => console.log(error));
     };
 
-    // check is admin
-    // useEffect(() => {
-    //     const url = `https://morning-headland-77157.herokuapp.com/users/${user?.email}`;
-    //     axios
-    //         .get(url)
-    //         .then(res => {
-    //             setIsAdmin(res.data.admin);
-    //         })
-    // }, [user?.email]);
-
     return {
         user,
-        // isAdmin,
+        token,
         isLoading,
         authError,
+        isAdmin,
+        isAdminLoading,
         signInWithApple,
         registerWithEmail,
         loginWithEmail,

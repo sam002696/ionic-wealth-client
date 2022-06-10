@@ -55,7 +55,7 @@ const Testimonial = () => {
                                                                     <span data-src="http://placehold.it/58x54"></span>
 
 
-                                                                    <img src={testimonial.image} width="58" height="54" alt="profile" />
+                                                                    {/* <img src={testimonial.image} width="58" height="54" alt="profile" /> */}
                                                                 </span>
                                                             </a>
                                                             <a href="instagram.com">{testimonial.name}<br />{testimonial.designation}</a></cite>
@@ -78,7 +78,7 @@ const Testimonial = () => {
                                 activeClassName={"paginationActive"}
                             />
                         </section>
-                        <aside className="col-sm-4 col-md-3-latestpost col-xs-12" id="sidebar">
+                        {/* <aside className="col-sm-4 col-md-3-latestpost col-xs-12" id="sidebar">
                             <nav className="widget-latestpost latest-widget dark:bg-slate-900">
                                 <h2 className='dark:bg-slate-900 dark:text-white'>lATEST Posts</h2>
                                 <ul className="latest-post-nav list-unstyled">
@@ -96,7 +96,7 @@ const Testimonial = () => {
                                     </li>
                                 </ul>
                             </nav>
-                        </aside>
+                        </aside> */}
                     </div>
                 </div>
             </section>

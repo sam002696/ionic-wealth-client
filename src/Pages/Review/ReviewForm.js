@@ -86,7 +86,7 @@ const ReviewForm = () => {
                     </div>
                 </div>
             </section>
-            {/* Review Bannerm end */}
+            {/* Review Banner end */}
             <section id="add_review" className="add-review dark:bg-dark-variant p-16" style={{ backgroundImage: "url(" + reviewBanner + ")", backgroundRepeat: "no-repeat", backgroundPosition: "center", backgroundSize: "cover" }}>
                 <div className="max-w-5xl mx-auto bg-[#f1f9fe] rounded-md">
                     <form onSubmit={handleSubmit(onSubmit)} className="dark:bg-slate-900 flex flex-col  p-8 rounded-xl shadow-sky-500/50 shadow-2xl space-y-14 ring-4 ring-gray-300">

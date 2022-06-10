@@ -66,6 +66,7 @@ module.exports = {
       minHeight: {
         '250px': '250px',
         'vh-50': '50vh',
+        'vh-100': '100vh'
         // 'vh-55': '55vh',
         // 'vh-60': '60vh',
         // 'vh-70': '70vh',
